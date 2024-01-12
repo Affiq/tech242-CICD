@@ -70,4 +70,22 @@ We may also need to change the branch specifier to ```main```.
 
 ![Alt text](mainBranchSpecifier.PNG)
 
-Once done, we can then save and build this project for our worker nodes to run. We can then observe build successes or failures through the console output of our project.
+Once done, we can then save and build this project for our worker nodes to run. We can then observe build successes or failures through the console output of our project.oar
+
+## Creating a pipeline with multiple jobs
+
+#### Job 1: Testing pushes from Git
+
+We will need to configure the webhook from GitHub's side to trigger Jenkins on repository push. We can then confirm a successful link to our webhook by the tick icon.
+![Alt text](GithubWebhook.PNG)
+
+![Alt text](ConfirmedWebhook.PNG)
+
+#### Job 2: Performing a Git Merge
+
+We will now need the following configurations in our Jenkins.
+We will use the Git Publisher post build action to trigger a merge into a remote repository. The Merge before build action is misleading as this makes a merge into our local repo.
+
+![Alt text](Job2Config1.PNG)
+![Alt text](Job2Config2.PNG)
+![Alt text](Job2Config3.PNG)
