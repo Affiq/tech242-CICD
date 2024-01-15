@@ -43,6 +43,8 @@ We will now create a pipeline for our JSonVorhees application which consists of 
 * A push for a successful test
 * A deployment
 
+### Job 1: Testing pushes from Git
+
 #### Configure GitHub Project
 
 We will first need to follow the normal procedure to create a new project. However in the second configuration page, there will be some additional steps. Under GitHub projects, we will need to check Git Project and paste the project URL, which will be the HTTPS link instead of the SSH link.
@@ -72,14 +74,12 @@ We may also need to change the branch specifier to ```main```.
 
 Once done, we can then save and build this project for our worker nodes to run. We can then observe build successes or failures through the console output of our project.oar
 
-## Creating a pipeline with multiple jobs
-
-#### Job 1: Testing pushes from Git
-
 We will need to configure the webhook from GitHub's side to trigger Jenkins on repository push. We can then confirm a successful link to our webhook by the tick icon.
 ![Alt text](GithubWebhook.PNG)
 
 ![Alt text](ConfirmedWebhook.PNG)
+
+From here, we can test if a push into dev will trigger a build in Job1.
 
 #### Job 2: Performing a Git Merge
 
@@ -89,3 +89,23 @@ We will use the Git Publisher post build action to trigger a merge into a remote
 ![Alt text](Job2Config1.PNG)
 ![Alt text](Job2Config2.PNG)
 ![Alt text](Job2Config3.PNG)
+
+#### Job 3: Performing a deployment
+We would like to copy files from the Jenkins worker node to the EC2 instance itself. In this case we will assume:
+* The instance is running
+* The instance contains all the software dep. needed
+
+![Alt text](SSHAgent.PNG)
+
+We will first need to configure an SSH agent to allow the Jenkins worker node to SSH into the VM. This means we do not have to specify pem files for ```ssh``` or ```scp``` commands.
+
+![Alt text](Job3ExecuteShell.PNG)
+
+Other projects also tend to be on a level higher than the current job.
+
+```
+cd ..
+cd affiq-jsonvh-job1-ci-test
+scp -o StrictHostKeyChecking=no -r springapi ubuntu@ec2-18-203-87-194.eu-west-1.compute.amazonaws.com:~
+ssh -o StrictHostKeyChecking=no ubuntu@ec2-18-203-87-194.eu-west-1.compute.amazonaws.com "cd ~/springapi; mvn package spring-boot:start"
+```
